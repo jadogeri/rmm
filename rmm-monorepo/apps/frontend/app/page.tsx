@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import styles from "./page.module.css";
 
 type Row = Record<string, unknown>;
@@ -91,8 +91,9 @@ export default function Home() {
   const [loadError, setLoadError] = useState("");
   const [submitError, setSubmitError] = useState("");
   const [createdTicket, setCreatedTicket] = useState("");
+  const [ticketSent, setTicketSent] = useState(false);
 
-  async function loadOptions() {
+  const loadOptions = useCallback(async () => {
     setLoading(true);
     setLoadError("");
     try {
@@ -112,9 +113,9 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
-  useEffect(() => { void loadOptions(); }, []);
+  useEffect(() => { void loadOptions(); }, [loadOptions]);
 
   const selectedCustomer = customers.find((item) => text(item, "customerId", "CustomerId", "id") === form.customerId);
   const customerCompany = selectedCustomer ? text(selectedCustomer, "companyId", "CompanyId") : "";
@@ -136,11 +137,12 @@ export default function Home() {
     setForm((current) => ({ ...current, [key]: value }));
   }
 
-  async function submitTicket(event: React.FormEvent<HTMLFormElement>) {
+  async function submitTicket(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setSubmitting(true);
     setSubmitError("");
     setCreatedTicket("");
+    setTicketSent(false);
     const priority = priorities.find((item) => item.id === form.priorityCode);
     const payload = {
       title: form.title.trim(),
@@ -167,6 +169,7 @@ export default function Home() {
       }
       const body = result && typeof result === "object" ? result as Row : {};
       setCreatedTicket(text(body, "ticketId", "TicketId", "id", "ticketNumber", "TicketNumber"));
+      setTicketSent(true);
       setForm(initialForm());
     } catch (error) {
       setSubmitError(error instanceof Error ? error.message : "Ticket could not be created.");
@@ -205,9 +208,9 @@ export default function Home() {
           </div>
 
           <AnimatePresence mode="wait">
-            {createdTicket && <motion.div className={styles.successNotice} role="status" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}>
+            {ticketSent && <motion.div className={styles.successNotice} role="status" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}>
               <span className={styles.successIcon}>✓</span><span><strong>Ticket created</strong><small>{createdTicket ? "Reference " + createdTicket : "Your request was sent to the service desk."}</small></span>
-              <button type="button" className={styles.dismissButton} onClick={() => setCreatedTicket("")} aria-label="Dismiss success message">×</button>
+              <button type="button" className={styles.dismissButton} onClick={() => { setCreatedTicket(""); setTicketSent(false); }} aria-label="Dismiss success message">×</button>
             </motion.div>}
           </AnimatePresence>
           {loadError && <div className={styles.errorNotice} role="alert"><strong>Couldn’t load ticket options.</strong><span>{loadError}</span><button type="button" onClick={() => void loadOptions()}>Try again</button></div>}
