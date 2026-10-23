@@ -4,10 +4,13 @@ import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
 import { HelpdeskClientService } from '../helpdesk-client/helpdesk-client.service';
 import { LocationsEntity, CustomersEntity } from '@repo/database';  
+import { LocationResponseDto } from './dto/location-response.dto';
+import { LocationsMapper } from './locations.mapper';
 
 @Injectable()
 export class LocationsService implements IMspSyncer {
   private readonly logger = new Logger(LocationsService.name);
+  private readonly mapper = new LocationsMapper(); // 🟢 Instantiated mapper context cleanly
 
   constructor(
     @InjectRepository(LocationsEntity)
@@ -23,15 +26,19 @@ export class LocationsService implements IMspSyncer {
   /**
    * Reads locations for a customer strictly out of Docker (Fast dropdowns)
    */
-  async getLocationsByCustomer(customerId: string): Promise<LocationsEntity[]> {
-    return await this.locationRepo.find({ customer: { customerId: customerId } });
+  async getLocationsByCustomer(customerId: string): Promise<LocationResponseDto[]> {
+    const entities = await this.locationRepo.find({ customer: { customerId: customerId } });
+    // 🟢 FIXED: Maps each database row systematically through the domain DTO contract rules
+    return entities.map((entity) => this.mapper.toDomain(entity));
   }
 
   /**
-   * Reads locations for a customer strictly out of Docker (Fast dropdowns)
+   * Reads locations strictly out of Docker (Fast dropdowns)
    */
-  async getLocations(): Promise<LocationsEntity[]> {
-    return await this.locationRepo.findAll();
+  async getLocations(): Promise<LocationResponseDto[]> {
+    const entities = await this.locationRepo.findAll();
+    // 🟢 FIXED: Maps each database row systematically through the domain DTO contract rules
+    return entities.map((entity) => this.mapper.toDomain(entity));
   }
 
   /**
@@ -61,7 +68,7 @@ export class LocationsService implements IMspSyncer {
       if (!parentCustomerExists) {
         this.logger.warn(`⚠️ Parent Customer ID [${item.CustomerId}] missing during Location sync pass. Stubbing placeholder record.`);
         
-        // 🟢 FIXED: Atomic upsert pushes parent stub record immediately down to PostgreSQL disk
+        // Atomic upsert pushes parent stub record immediately down to PostgreSQL disk
         await fork.upsert(CustomersEntity, {
           customerId: item.CustomerId,
           customerName: `Pending Sync Customer (${item.CustomerId.slice(0, 8)})`,

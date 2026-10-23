@@ -1,6 +1,7 @@
 // apps/backend/src/modules/locations/locations.controller.ts
 import { Controller, Get, Post, Query, ParseUUIDPipe, HttpCode, HttpStatus } from '@nestjs/common';
 import { LocationsService } from './locations.service';
+import { LocationResponseDto } from './dto/location-response.dto';
 
 @Controller('locations')
 export class LocationsController {
@@ -20,7 +21,7 @@ export class LocationsController {
    * Route: GET /locations/all
    */
   @Get('')
-  async getLocations() {
+  async getLocations(): Promise<LocationResponseDto[]> {
     return await this.locationsService.getLocations();
   }
 
