@@ -6,15 +6,15 @@ export class CustomersMapper implements IMapper<CustomersEntity, CustomerRespons
   
   /**
    * Transforms your strict database entity structure smoothly into a 
-   * class-transformer response wrapper layer for the client UI layer.
+   * response wrapper layer for the client UI layer matching the implemented interface.
    */
   toDomain(entity: CustomersEntity): CustomerResponseDto {
     const dto = new CustomerResponseDto();
-    dto.id = entity.customerId;
-    dto.name = entity.customerName;
-    dto.referenceCode = entity.referenceId;
+    dto.customerId = entity.customerId;
+    dto.customerName = entity.customerName;
+    dto.referenceId = entity.referenceId;
     dto.programLevelId = entity.programLevelId;
-    dto.status = entity.customerStatusId;
+    dto.customerStatusId = entity.customerStatusId;
     dto.companyId = entity.companyId ?? null; 
     return dto;
   }
@@ -25,13 +25,13 @@ export class CustomersMapper implements IMapper<CustomersEntity, CustomerRespons
    */
   toEntity(domain: CustomerResponseDto): CustomersEntity {
     const entity = new CustomersEntity();
-    entity.customerId = domain.id;
-    entity.customerName = domain.name;
-    entity.referenceId = domain.referenceCode;
+    entity.customerId = domain.customerId;
+    entity.customerName = domain.customerName;
+    entity.referenceId = domain.referenceId;
     entity.programLevelId = domain.programLevelId;
-    entity.customerStatusId = domain.status;
+    entity.customerStatusId = domain.customerStatusId;
     
-    // 🟢 FIXED: Satisfies TypeScript by casting a standard identifier object reference placeholder
+    // Satisfies TypeScript by casting a standard identifier object reference placeholder
     entity.company = domain.companyId 
       ? ({ companyId: domain.companyId } as CompanyEntity)
       : null;

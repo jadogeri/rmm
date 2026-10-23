@@ -15,4 +15,9 @@ export class AppController {
     return this.helpdeskClientService.get('company');
   }
 
+  @Get("ticket-priorities")
+  getTicketPriorities(): any {
+    return this.helpdeskClientService.get('ticketpriority');
+  }
+
 }

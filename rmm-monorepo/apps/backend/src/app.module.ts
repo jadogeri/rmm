@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { IssueTypesModule } from './modules/issue-types/issue-types.module';
+import { UsersModule } from './modules/users/users.module';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule'; // 👈 1. Added Schedule Import
@@ -8,9 +9,10 @@ import { AppController } from './app.controller';
 import { TicketsModule } from './modules/tickets/tickets.module';
 import { HelpdeskClientModule } from './modules/helpdesk-client/helpdesk-client.module';
 import { LocationsModule } from './modules/locations/locations.module';
-import { SyncModule } from './infrastructure/cron/sync-cron.module';
+import { SyncCronModule } from './infrastructure/cron/sync-cron.module';
 import { CustomersModule } from './modules/customers/customers.module';
 import { TicketCustomStatusesModule } from './modules/ticket-custom-statuses/ticket-custom-statuses.module';
+import { ContactsModule } from './modules/contacts/contacts.module';
 
 @Module({
   imports: [
@@ -23,7 +25,9 @@ import { TicketCustomStatusesModule } from './modules/ticket-custom-statuses/tic
     LocationsModule,
     IssueTypesModule,
     TicketCustomStatusesModule,
-    SyncModule, // 👈 4. Added to process your SyncCronService providers
+    ContactsModule,
+    UsersModule,
+    SyncCronModule, // 👈 4. Added to process your SyncCronService providers
   ],
   controllers: [AppController],
   providers: [],

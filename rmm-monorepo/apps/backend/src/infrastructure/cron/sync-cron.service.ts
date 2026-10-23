@@ -3,7 +3,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { IMspSyncer } from '../../common/interfaces/msp-sync.interface';
 import { CustomersService } from '../../modules/customers/customers.service';
+import { ContactsService } from '../../modules/contacts/contacts.service';
+import { UsersService } from '../../modules/users/users.service';
 import { LocationsService } from '../../modules/locations/locations.service';
+import { ServiceItemsService } from '../../modules/service-items/service-items.service';
 import { IssueTypesService } from '../../modules/issue-types/issue-types.service';
 import { CompanyService } from '../../modules/company/company.service';
 import { TicketCustomStatusesService } from '../../modules/ticket-custom-statuses/ticket-custom-statuses.service';
@@ -18,6 +21,9 @@ export class SyncCronService {
     private readonly locationsService: LocationsService,
     private readonly issueTypesService: IssueTypesService,
     private readonly ticketCustomStatusesService: TicketCustomStatusesService,  
+    private readonly serviceItemsService: ServiceItemsService,
+    private readonly contactsService: ContactsService,
+    private readonly usersService: UsersService
   ) {}
 
   @Cron(CronExpression.EVERY_MINUTE)
@@ -32,6 +38,9 @@ export class SyncCronService {
       this.locationsService,
       this.issueTypesService,
       this.ticketCustomStatusesService,
+      this.serviceItemsService,
+      this.contactsService,
+      this.usersService
     ];
 
     for (const syncer of sequentialSyncers) {
