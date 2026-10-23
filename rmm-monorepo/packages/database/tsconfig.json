@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "commonjs",
+    "lib": ["es2022"],
+    "skipLibCheck": true,
+    "strict": true,    
+    "experimentalDecorators": true, 
+    "emitDecoratorMetadata": true,
+    "forceConsistentCasingInFileNames": false,
+    "esModuleInterop": true,
+    "noEmit": false,
+
+    // 🔴 THE EXACT FIX: Define the source folder root explicitly
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "declaration": true
+  },
+  "include": ["src/**/*"]
+}
