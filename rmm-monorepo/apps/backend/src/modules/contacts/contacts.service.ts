@@ -1,3 +1,4 @@
+import { readODataField } from '../../common/utils/read-odata-field';
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
@@ -43,13 +44,13 @@ export class ContactsService implements IMspSyncer {
 
       // Transcribe OData capital casing down to internal primitive field contracts
       const externalContacts: IContact[] = response.value.map((item) => ({
-        contactId: item.ContactId,
-        firstName: item.FirstName || '',
-        lastName: item.LastName || '',
-        emailAddress: item.EmailAddress || '',
-        phoneMobile: item.PhoneMobile || '',
-        companyId: item.CompanyId,
-        locationId: item.LocationId,
+        contactId: readODataField(item, 'contactId'),
+        firstName: readODataField(item, 'firstName') || '',
+        lastName: readODataField(item, 'lastName') || '',
+        emailAddress: readODataField(item, 'emailAddress') || '',
+        phoneMobile: readODataField(item, 'phoneMobile') || '',
+        companyId: readODataField(item, 'companyId'),
+        locationId: readODataField(item, 'locationId'),
       }));
 
       for (const contact of externalContacts) {

@@ -1,3 +1,4 @@
+import { readODataField } from '../../common/utils/read-odata-field';
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { IMspSyncer } from '../../common/interfaces/msp-sync.interface';
 import { InjectRepository } from '@mikro-orm/nestjs';
@@ -60,18 +61,18 @@ export class LocationsService implements IMspSyncer {
     let importCount = 0;
 
     for (const item of response.value) {
-      if (!item.CustomerId || !item.LocationId) continue;
+      if (!readODataField(item, 'customerId') || !readODataField(item, 'locationId')) continue;
 
       // 🔍 Relational Guard: Ensure parent Customer exists in Docker before linking FK constraints
-      const parentCustomerExists = await fork.findOne(CustomersEntity, { customerId: item.CustomerId });
+      const parentCustomerExists = await fork.findOne(CustomersEntity, { customerId: readODataField(item, 'customerId') });
       
       if (!parentCustomerExists) {
-        this.logger.warn(`⚠️ Parent Customer ID [${item.CustomerId}] missing during Location sync pass. Stubbing placeholder record.`);
+        this.logger.warn(`⚠️ Parent Customer ID [${readODataField(item, 'customerId')}] missing during Location sync pass. Stubbing placeholder record.`);
         
         // Atomic upsert pushes parent stub record immediately down to PostgreSQL disk
         await fork.upsert(CustomersEntity, {
-          customerId: item.CustomerId,
-          customerName: `Pending Sync Customer (${item.CustomerId.slice(0, 8)})`,
+          customerId: readODataField(item, 'customerId'),
+          customerName: `Pending Sync Customer (${readODataField(item, 'customerId').slice(0, 8)})`,
           programLevelId: '00000000-0000-0000-0000-000000000000',
           customerStatusId: 1,
           company: null, // Fully matches your newly updated schema constraints contract rules
@@ -80,9 +81,9 @@ export class LocationsService implements IMspSyncer {
 
       // 🛢️ Native Upsert: Safely inserts child rows because the parent ID is guaranteed to exist on disk now
       await fork.upsert(LocationsEntity, {
-        locationId: item.LocationId,
-        locationName: item.LocationName || 'Unnamed Location',
-        customer: item.CustomerId, // MikroORM resolves reference links implicitly via object keys
+        locationId: readODataField(item, 'locationId'),
+        locationName: readODataField(item, 'locationName') || 'Unnamed Location',
+        customer: readODataField(item, 'customerId'), // MikroORM resolves reference links implicitly via object keys
       } as any);
 
       importCount++;

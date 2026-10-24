@@ -1,3 +1,4 @@
+import { readODataField } from '../../common/utils/read-odata-field';
 // apps/backend/src/modules/ticket-custom-statuses/ticket-custom-statuses.service.ts
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
@@ -49,12 +50,12 @@ export class TicketCustomStatusesService implements IMspSyncer {
 
       // Map raw OData properties cleanly over to strict camelCase interface schema contract keys
       const externalStatuses: TicketCustomStatus[] = payload.map((item) => ({
-        TicketCustomStatusId: item.TicketCustomStatusId,
-        Name: item.Name,
-        Description: item.Description || null,
-        IsDefault: item.IsDefault ?? false,
-        TicketStatusCode: item.TicketStatusCode,
-        CompanyId: item.CompanyId || null,
+        TicketCustomStatusId: readODataField(item, 'ticketCustomStatusId'),
+        Name: readODataField(item, 'name'),
+        Description: readODataField(item, 'description') || null,
+        IsDefault: readODataField(item, 'isDefault') ?? false,
+        TicketStatusCode: readODataField(item, 'ticketStatusCode'),
+        CompanyId: readODataField(item, 'companyId') || null,
       }));
 
       // 🛠️ PHASE 1: Parse and commit flat custom statuses securely using the entity manager fork context block

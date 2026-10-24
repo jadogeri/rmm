@@ -1,3 +1,4 @@
+import { readODataField } from '../../common/utils/read-odata-field';
 // apps/backend/src/modules/service-items/service-items.service.ts
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
@@ -41,10 +42,10 @@ export class ServiceItemsService implements IMspSyncer {
 
       for (const item of payload) {
         await fork.upsert(ServiceItemsEntity, {
-          serviceItemId: item.ServiceItemId,
-          serviceItemName: item.ServiceItemName || 'Unnamed Service Item',
-          serviceItemTypeCode: item.ServiceItemTypeCode,
-          customer: item.CustomerId || null,
+          serviceItemId: readODataField(item, 'serviceItemId'),
+          serviceItemName: readODataField(item, 'serviceItemName') || 'Unnamed Service Item',
+          serviceItemTypeCode: readODataField(item, 'serviceItemTypeCode'),
+          customer: readODataField(item, 'customerId') || null,
         } as any);
       }
 

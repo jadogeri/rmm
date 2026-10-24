@@ -1,3 +1,4 @@
+import { readODataField } from '../../common/utils/read-odata-field';
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
@@ -52,12 +53,12 @@ export class IssueTypesService implements IMspSyncer {
 
       // Map raw OData properties cleanly over to strict camelCase interface schema contract keys
       const externalIssues: IIssueType[] = payload.map((item) => ({
-        issueTypeId: item.IssueTypeId,
-        name: item.Name,
-        description: item.Description || null,
-        rmReferenceId: item.RmReferenceId || null,
-        companyId: item.CompanyId || null,
-        parentIssueTypeId: item.ParentIssueTypeId || null,
+        issueTypeId: readODataField(item, 'issueTypeId'),
+        name: readODataField(item, 'name'),
+        description: readODataField(item, 'description') || null,
+        rmReferenceId: readODataField(item, 'rmReferenceId') || null,
+        companyId: readODataField(item, 'companyId') || null,
+        parentIssueTypeId: readODataField(item, 'parentIssueTypeId') || null,
       }));
 
       // 🛠️ PHASE 1: Parse and commit top-level parent headers first (No Parent constraint blocks)
