@@ -1,4 +1,4 @@
-import { readODataField } from '../../common/utils/read-odata-field';
+import { readODataField, readRequiredODataField } from '../../common/utils/read-odata-field';
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { IMspSyncer } from '../../common/interfaces/msp-sync.interface';
 import { InjectRepository } from '@mikro-orm/nestjs';
@@ -61,18 +61,20 @@ export class LocationsService implements IMspSyncer {
     let importCount = 0;
 
     for (const item of response.value) {
-      if (!readODataField(item, 'customerId') || !readODataField(item, 'locationId')) continue;
+      const customerId = readRequiredODataField<string>(item, 'customerId');
+      const locationId = readRequiredODataField<string>(item, 'locationId');
+      const locationName = readODataField<string | null>(item, 'locationName') ?? 'Unnamed Location';
 
       // 🔍 Relational Guard: Ensure parent Customer exists in Docker before linking FK constraints
-      const parentCustomerExists = await fork.findOne(CustomersEntity, { customerId: readODataField(item, 'customerId') });
+      const parentCustomerExists = await fork.findOne(CustomersEntity, { customerId });
       
       if (!parentCustomerExists) {
-        this.logger.warn(`⚠️ Parent Customer ID [${readODataField(item, 'customerId')}] missing during Location sync pass. Stubbing placeholder record.`);
+        this.logger.warn(`⚠️ Parent Customer ID [${customerId}] missing during Location sync pass. Stubbing placeholder record.`);
         
         // Atomic upsert pushes parent stub record immediately down to PostgreSQL disk
         await fork.upsert(CustomersEntity, {
-          customerId: readODataField(item, 'customerId'),
-          customerName: `Pending Sync Customer (${readODataField(item, 'customerId').slice(0, 8)})`,
+          customerId,
+          customerName: `Pending Sync Customer (${customerId.slice(0, 8)})`,
           programLevelId: '00000000-0000-0000-0000-000000000000',
           customerStatusId: 1,
           company: null, // Fully matches your newly updated schema constraints contract rules
@@ -81,9 +83,9 @@ export class LocationsService implements IMspSyncer {
 
       // 🛢️ Native Upsert: Safely inserts child rows because the parent ID is guaranteed to exist on disk now
       await fork.upsert(LocationsEntity, {
-        locationId: readODataField(item, 'locationId'),
-        locationName: readODataField(item, 'locationName') || 'Unnamed Location',
-        customer: readODataField(item, 'customerId'), // MikroORM resolves reference links implicitly via object keys
+        locationId,
+        locationName,
+        customer: customerId, // MikroORM resolves reference links implicitly via object keys
       } as any);
 
       importCount++;
