@@ -36,7 +36,7 @@ export class CompanyService implements IMspSyncer {
 
       const companyConfig: ICompany = {
         companyId: readRequiredODataField<string>(response, 'companyId'),
-        companyName: readODataField<string | null>(response, 'companyName') ?? 'Unnamed Company',
+        companyName: readODataField<string | null>(response, 'companyName') ?? 'Orleans Assessors Office',
         lastTicketNumber: readODataField<number>(response, 'lastTicketNumber') ?? 0,
         businessType: readODataField<number>(response, 'businessType') ?? 0,
       };
