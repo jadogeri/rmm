@@ -1,3 +1,4 @@
+import { readODataField } from '../../common/utils/read-odata-field';
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
@@ -64,15 +65,15 @@ export class UsersService implements IMspSyncer {
       
       // Map OData PascalCase keys down to your direct shared types IUser contract format
       const externalUsers: IUser[] = response.value.map((item) => ({
-        UserId: item.UserId,
-        EmailAddress: item.EmailAddress || '',
-        FirstName: item.FirstName || '',
-        LastName: item.LastName || '',
-        Status: item.Status || 'Active',
-        Enabled: item.Enabled ?? true,
-        LastLogin: item.LastLogin || null,
-        PhoneMobile: item.PhoneMobile || null,
-        CompanyId: item.CompanyId,
+        UserId: readODataField(item, 'userId'),
+        EmailAddress: readODataField(item, 'emailAddress') || '',
+        FirstName: readODataField(item, 'firstName') || '',
+        LastName: readODataField(item, 'lastName') || '',
+        Status: readODataField(item, 'status') || 'Active',
+        Enabled: readODataField(item, 'enabled') ?? true,
+        LastLogin: readODataField(item, 'lastLogin') || null,
+        PhoneMobile: readODataField(item, 'phoneMobile') || null,
+        CompanyId: readODataField(item, 'companyId'),
       }));
 
       // Ingest the mapped records directly using high-speed native database transactions

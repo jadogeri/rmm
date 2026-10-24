@@ -23,7 +23,7 @@ export const axiosConfigFactory = (
     infer: true,
   });
 
-  console.log('Axios config:', { baseUrl, apiKey, timeoutVal });
+  console.log('Axios config:', { baseUrl, hasApiKey: Boolean(apiKey), timeoutVal });
 
   return {
     baseURL: baseUrl,
