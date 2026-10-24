@@ -1,4 +1,4 @@
-import { readODataField } from '../../common/utils/read-odata-field';
+import { readODataField, readRequiredODataField } from '../../common/utils/read-odata-field';
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
@@ -65,15 +65,15 @@ export class UsersService implements IMspSyncer {
       
       // Map OData PascalCase keys down to your direct shared types IUser contract format
       const externalUsers: IUser[] = response.value.map((item) => ({
-        UserId: readODataField(item, 'userId'),
-        EmailAddress: readODataField(item, 'emailAddress') || '',
-        FirstName: readODataField(item, 'firstName') || '',
-        LastName: readODataField(item, 'lastName') || '',
-        Status: readODataField(item, 'status') || 'Active',
-        Enabled: readODataField(item, 'enabled') ?? true,
-        LastLogin: readODataField(item, 'lastLogin') || null,
-        PhoneMobile: readODataField(item, 'phoneMobile') || null,
-        CompanyId: readODataField(item, 'companyId'),
+        UserId: readRequiredODataField<string>(item, 'userId'),
+        EmailAddress: readODataField<string>(item, 'emailAddress') ?? '',
+        FirstName: readODataField<string>(item, 'firstName') ?? '',
+        LastName: readODataField<string>(item, 'lastName') ?? '',
+        Status: readODataField<string>(item, 'status') ?? 'Active',
+        Enabled: readODataField<boolean>(item, 'enabled') ?? true,
+        LastLogin: readODataField<string | null>(item, 'lastLogin') ?? null,
+        PhoneMobile: readODataField<string | null>(item, 'phoneMobile') ?? null,
+        CompanyId: readRequiredODataField<string>(item, 'companyId'),
       }));
 
       // Ingest the mapped records directly using high-speed native database transactions

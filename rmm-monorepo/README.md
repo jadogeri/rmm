@@ -157,3 +157,10 @@ Learn more about the power of Turborepo:
 - [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
 - [Configuration Options](https://turborepo.dev/docs/reference/configuration)
 - [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+
+
+## RMM project guides
+
+- [Docker development database](DOCKER.md)
+- [MikroORM migrations and schema commands](MIKROORM.md)
+- [Run the mock MSP API and connect the RMM stack](MSP.md)

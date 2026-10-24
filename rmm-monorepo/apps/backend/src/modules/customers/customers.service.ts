@@ -1,4 +1,4 @@
-import { readODataField } from '../../common/utils/read-odata-field';
+import { readODataField, readRequiredODataField } from '../../common/utils/read-odata-field';
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
@@ -69,12 +69,12 @@ export class CustomersService implements IMspSyncer {
     }
 
     return response.value.map((item) => ({
-      customerId: readODataField(item, 'customerId'),
-      customerName: readODataField(item, 'customerName'),
-      referenceId: readODataField(item, 'referenceId'),
-      programLevelId: readODataField(item, 'programLevelId'),
-      customerStatusId: Number(readODataField(item, 'customerStatusId')),
-      companyId: readODataField(item, 'companyId'),
+      customerId: readRequiredODataField<string>(item, 'customerId'),
+      customerName: readODataField<string>(item, 'customerName') ?? 'Unnamed Customer',
+      referenceId: readODataField<string | null>(item, 'referenceId') ?? null,
+      programLevelId: readODataField<string>(item, 'programLevelId') ?? '00000000-0000-0000-0000-000000000000',
+      customerStatusId: Number(readODataField<number>(item, 'customerStatusId') ?? 1),
+      companyId: readODataField<string | null>(item, 'companyId') ?? null,
     }));
   }
 

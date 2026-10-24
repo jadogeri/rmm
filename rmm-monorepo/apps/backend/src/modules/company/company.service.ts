@@ -1,3 +1,4 @@
+import { readODataField, readRequiredODataField } from '../../common/utils/read-odata-field';
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
@@ -28,17 +29,16 @@ export class CompanyService implements IMspSyncer {
       // 📡 Request hits the raw Singleton endpoint directly
       const response = await this.helpdeskClient.get<any>('Company');
 
-      if (!response || !response.CompanyId) {
+      if (!response) {
         this.logger.warn('⚠️ Received invalid or empty Singleton payload from Company API.');
         return;
       }
 
-      // Map primitive OData properties securely down to CamelCase keys
       const companyConfig: ICompany = {
-        companyId: response.CompanyId,
-        companyName: response.CompanyName || 'Orleans Assessors Office',
-        lastTicketNumber: response.LastTicketNumber || 0,
-        businessType: response.BusinessType || 0,
+        companyId: readRequiredODataField<string>(response, 'companyId'),
+        companyName: readODataField<string | null>(response, 'companyName') ?? 'Unnamed Company',
+        lastTicketNumber: readODataField<number>(response, 'lastTicketNumber') ?? 0,
+        businessType: readODataField<number>(response, 'businessType') ?? 0,
       };
 
       const fork = this.companyRepository.getEntityManager().fork();
