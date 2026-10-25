@@ -1,11 +1,24 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Inject } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Inject, HttpCode, HttpStatus, ValidationPipe, UsePipes } from '@nestjs/common';
+import { ApiBody, ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateTicketDto } from './dto/create-ticket.dto';
+import { CreatePortalTicketDto } from './dto/create-portal-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
 import { TicketsService } from './tickets.service';
 
+@ApiTags('tickets')
 @Controller('tickets')
 export class TicketsController {
   constructor( @Inject(TicketsService) private readonly ticketsService: TicketsService) {}
+
+  @Post('portal')
+  @HttpCode(HttpStatus.CREATED)
+  @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
+  @ApiBody({ type: CreatePortalTicketDto })
+  @ApiCreatedResponse({ description: 'Ticket created; response includes its MSP ticket number.' })
+  @ApiOperation({ summary: 'Create a customer ticket using an email and one issue type' })
+  async createPortalTicket(@Body() dto: CreatePortalTicketDto) {
+    return this.ticketsService.createPortalTicket(dto);
+  }
 
   @Post()
   async create(@Body() createTicketDto: CreateTicketDto) {
