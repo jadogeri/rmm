@@ -30,6 +30,53 @@ curl -sS 'http://localhost:3002/odata/Customers?$top=5' \
   -H 'X-API-Key: <apiKey returned by login>'
 ~~~
 
+The login response includes `apiKey`. In Swagger, open **Authorize**, paste that value into the `X-API-Key` field, and click **Authorize** to send it on protected requests. On Windows PowerShell, use the script below to set the key for the current session and copy it to the clipboard. Run it in PowerShell, not Git Bash.
+
+~~~powershell
+$email = 'admin@example.test'
+$securePassword = Read-Host 'Bootstrap admin password' -AsSecureString
+$password = [System.Net.NetworkCredential]::new('', $securePassword).Password
+$process = $null
+$apiKey = $null
+
+try {
+  $body = @{ email = $email; password = $password } | ConvertTo-Json
+  $login = Invoke-RestMethod `
+    -Method Post `
+    -Uri 'http://localhost:3002/auth/login' `
+    -ContentType 'application/json' `
+    -Body $body
+
+  $apiKey = [string]$login.apiKey
+  if ([string]::IsNullOrWhiteSpace($apiKey)) {
+    throw 'The login response did not contain apiKey. Check the email and password, then inspect the response in Swagger.'
+  }
+
+  $env:HELP_DESK_API_KEY = $apiKey
+  $clipPath = Join-Path $env:SystemRoot 'System32\clip.exe'
+  if (-not (Test-Path $clipPath)) { throw 'Windows clip.exe was not found. Run this in a Windows PowerShell session.' }
+
+  # Use clip.exe directly; unlike Set-Clipboard this does not depend on the PowerShell clipboard provider.
+  $process = [System.Diagnostics.Process]::new()
+  $process.StartInfo.FileName = $clipPath
+  $process.StartInfo.UseShellExecute = $false
+  $process.StartInfo.RedirectStandardInput = $true
+  if (-not $process.Start()) { throw 'Could not start clip.exe.' }
+  $process.StandardInput.Write($apiKey)
+  $process.StandardInput.Close()
+  $process.WaitForExit()
+  if ($process.ExitCode -ne 0) { throw 'clip.exe could not copy the API key.' }
+
+  'API key generated, copied to the clipboard, and set for this PowerShell session.'
+}
+finally {
+  if ($process) { $process.Dispose() }
+  Remove-Variable password, securePassword, apiKey, body, login -ErrorAction SilentlyContinue
+}
+~~~
+
+The `HELP_DESK_API_KEY` environment variable remains set in that PowerShell session. The key is not printed; paste it only where needed and keep it private.
+
 The available resources are Users, Tickets, Company, Contacts, Customers, IssueTypes, Locations, ServiceItems, and TicketCustomStatuses. Collections use the OData value envelope; Company returns one Company object. Ticket creation accepts PascalCase or camelCase fields and validates service, contact, location, and issue-type IDs. Auth-user management is under /auth/users; password changes use PATCH /auth/password and revoke prior keys.
 
 ## Connect the RMM backend
