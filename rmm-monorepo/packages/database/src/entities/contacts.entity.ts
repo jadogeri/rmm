@@ -1,6 +1,6 @@
 import { Entity, PrimaryKey, Property, ManyToOne, Rel } from '@mikro-orm/core';
 import { IContact } from '@repo/types';
-import { CompanyEntity } from './Company.entity';
+import { CompanyEntity } from './company.entity';
 import { LocationsEntity } from './locations.entity';
 
 @Entity({ tableName: 'contacts' })

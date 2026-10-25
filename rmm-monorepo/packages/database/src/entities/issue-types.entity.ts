@@ -1,6 +1,6 @@
 import { Entity, PrimaryKey, Property, ManyToOne, OneToMany, Collection } from '@mikro-orm/core';
 import { IIssueType } from '@repo/types'; 
-import { CompanyEntity } from './Company.entity'; // 🟢 1. Import your Company Entity
+import { CompanyEntity } from './company.entity'; // 🟢 1. Import your Company Entity
 
 @Entity({ tableName: 'issue_types' })
 export class IssueTypesEntity implements IIssueType { 
