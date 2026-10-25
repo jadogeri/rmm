@@ -1,9 +1,9 @@
-const collectionRoutes = new Set(["customers", "contacts", "locations", "service-items", "issue-types", "ticket-priorities"]);
+const collectionRoutes = new Set(["issue-types"]);
 
 async function forward(request: Request, pathParts: string[]) {
   const path = pathParts.join("/");
   const method = request.method.toUpperCase();
-  if ((method === "GET" && !collectionRoutes.has(path)) || (method === "POST" && path !== "tickets")) {
+  if ((method === "GET" && !collectionRoutes.has(path)) || (method === "POST" && path !== "tickets/portal")) {
     return Response.json({ message: "This service desk route is not available." }, { status: 404 });
   }
   const baseUrl = (process.env.RMM_API_URL || "http://localhost:3001").replace(/\/+$/, "");

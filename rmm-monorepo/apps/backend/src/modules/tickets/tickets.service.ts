@@ -1,17 +1,13 @@
 import { Injectable, Inject, Logger, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
-import { 
-  ContactEntity, 
-  LocationsEntity, 
-  IssueTypesEntity, 
-  CustomersEntity // Assuming ServiceItemEntity lives inside your database exports too
-} from '@repo/database';
+import { ContactEntity, LocationsEntity, IssueTypesEntity, ServiceItemsEntity } from '@repo/database';
 import { ITicket } from '@repo/types';
 import { API_ENDPOINTS } from '@repo/constants';
 import { HelpdeskClientService } from '../helpdesk-client/helpdesk-client.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
+import { CreatePortalTicketDto } from './dto/create-portal-ticket.dto';
 
 @Injectable() // 🟢 Standardized back to your NestJS core provider initialization decorator
 export class TicketsService {
@@ -29,8 +25,69 @@ export class TicketsService {
     private readonly locationRepo: EntityRepository<LocationsEntity>,
 
     @InjectRepository(IssueTypesEntity)
-    private readonly issueTypeRepo: EntityRepository<IssueTypesEntity>
+    private readonly issueTypeRepo: EntityRepository<IssueTypesEntity>,
+
+    @InjectRepository(ServiceItemsEntity)
+    private readonly serviceItemRepo: EntityRepository<ServiceItemsEntity>
   ) {}
+
+  async createPortalTicket(input: CreatePortalTicketDto): Promise<unknown> {
+    const email = input.email.trim().toLowerCase();
+    const title = input.title.trim();
+    const description = input.description.trim();
+    if (!title || !description) {
+      throw new BadRequestException('A ticket title and description are required.');
+    }
+
+    // Match email server-side so the public form never receives the full contact directory.
+    const matchingContacts = await this.contactRepo.getEntityManager().getConnection().execute(
+      'select "ContactId" as "contactId" from "contacts" where lower("EmailAddress") = ? order by "ContactId" limit 2',
+      [email],
+    ) as Array<{ contactId: string }>;
+    if (matchingContacts.length !== 1) {
+      throw new BadRequestException('This email could not be matched to one service-desk contact. Check the address or contact your service desk.');
+    }
+
+    const contact = await this.contactRepo.findOne({ contactId: matchingContacts[0].contactId });
+    const locationId = contact?.locationId;
+    if (!contact || !locationId) {
+      throw new BadRequestException('The service-desk contact is missing its location. Contact your service desk.');
+    }
+
+    const location = await this.locationRepo.findOne({ locationId }, { populate: ['customer'] });
+    if (!location?.customer) {
+      throw new BadRequestException('The service-desk contact location is missing its customer. Contact your service desk.');
+    }
+
+    const serviceItem = await this.serviceItemRepo.findOne(
+      { customer: location.customer } as any,
+      { orderBy: { serviceItemId: 'asc' } },
+    );
+    if (!serviceItem) {
+      throw new BadRequestException('No service item is configured for this customer. Contact your service desk.');
+    }
+
+    const issueType = await this.issueTypeRepo.findOne(
+      { issueTypeId: input.issueTypeId },
+      { populate: ['children'] },
+    );
+    if (!issueType) throw new BadRequestException('The selected issue type is unavailable. Refresh and choose another.');
+    if (issueType.children.length > 0) {
+      throw new BadRequestException('This issue type has sub-issues. Select one child issue.');
+    }
+
+    return this.create({
+      title,
+      description,
+      dueDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+      serviceItemId: serviceItem.serviceItemId,
+      contactId: contact.contactId,
+      locationId,
+      issueTypeId: issueType.issueTypeId,
+      projectId: '',
+      ticketPriorityCode: 1,
+    });
+  }
 
   /**
    * Transactional Gatekeeper: Validates relation identifiers locally inside Docker, 
