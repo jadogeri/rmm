@@ -1,8 +1,9 @@
 data/*.sqlite
 data/*.sqlite-shm
 data/*.sqlite-wal
-# .env
-# .env.*
+# Local env files
+.env
+.env.*
 !.env.sample
 dist
 node_modules

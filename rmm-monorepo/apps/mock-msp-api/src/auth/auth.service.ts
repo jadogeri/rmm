@@ -1,4 +1,4 @@
-import { ConflictException, ForbiddenException, Injectable, OnModuleInit, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Inject, Injectable, OnModuleInit, UnauthorizedException } from '@nestjs/common';
 import { createHash, randomBytes, randomUUID, scrypt, timingSafeEqual } from 'node:crypto';
 import { promisify } from 'node:util';
 import { DatabaseService } from '../database/database.service';
@@ -10,7 +10,7 @@ type StoredUser = { id: string; email: string; password_salt: string; password_h
 
 @Injectable()
 export class AuthService implements OnModuleInit {
-  constructor(private readonly database: DatabaseService) {}
+  constructor(@Inject(DatabaseService) private readonly database: DatabaseService) {}
 
   async onModuleInit() {
     const count = this.database.db.prepare('SELECT COUNT(*) AS count FROM auth_users').get() as { count?: number } | undefined;

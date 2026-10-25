@@ -1,11 +1,11 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import { DatabaseService } from '../database/database.service';
 import { resolveResource, type ODataRecord, type ResourceName } from './resource-types';
 
 @Injectable()
 export class ResourcesService {
-  constructor(private readonly database: DatabaseService) {}
+  constructor(@Inject(DatabaseService) private readonly database: DatabaseService) {}
 
   list(resourceText: string, query: Record<string, unknown>, origin: string) {
     const resource = this.getResource(resourceText);

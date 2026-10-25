@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Inject, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiSecurity, ApiTags } from '@nestjs/swagger';
 import type { AuthenticatedRequest } from '../auth/api-key.guard';
 import { ApiKeyGuard } from '../auth/api-key.guard';
@@ -10,7 +10,7 @@ import { ResourcesService } from './resources.service';
 @UseGuards(ApiKeyGuard)
 @Controller('odata')
 export class ResourcesController {
-  constructor(private readonly resources: ResourcesService) {}
+  constructor(@Inject(ResourcesService) private readonly resources: ResourcesService) {}
 
   @Get(':resource')
   list(@Param('resource') resource: string, @Query() query: Record<string, unknown>, @Req() request: AuthenticatedRequest) {
