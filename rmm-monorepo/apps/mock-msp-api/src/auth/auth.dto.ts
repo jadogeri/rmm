@@ -32,7 +32,7 @@ export class LoginResponseDto {
   @ApiProperty({ type: String, example: 'X-API-Key' })
   headerName!: string;
 
-  @ApiProperty({ format: 'date-time' })
+  @ApiProperty({ type: String, format: 'date-time' })
   expiresAt!: string;
 
   @ApiProperty({ type: LoginUserResponseDto })
