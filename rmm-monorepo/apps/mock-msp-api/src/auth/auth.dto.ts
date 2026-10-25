@@ -1,35 +1,35 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class LoginRequestDto {
-  @ApiProperty({ example: 'admin@example.test', description: 'Administrator email used to bootstrap the local MSP API.' })
+  @ApiProperty({ type: String, example: 'admin@example.test', description: 'Administrator email used to bootstrap the local MSP API.' })
   email!: string;
 
-  @ApiProperty({ description: 'Bootstrap administrator password.', writeOnly: true })
+  @ApiProperty({ type: String, description: 'Bootstrap administrator password.', writeOnly: true })
   password!: string;
 }
 
 export class LoginUserResponseDto {
-  @ApiProperty({ format: 'uuid' })
+  @ApiProperty({ type: String, format: 'uuid' })
   id!: string;
 
-  @ApiProperty({ example: 'admin@example.test' })
+  @ApiProperty({ type: String, example: 'admin@example.test' })
   email!: string;
 
-  @ApiProperty({ enum: ['admin', 'user'] })
+  @ApiProperty({ type: String, enum: ['admin', 'user'] })
   role!: 'admin' | 'user';
 
-  @ApiProperty({ format: 'date-time' })
+  @ApiProperty({ type: String, format: 'date-time' })
   createdAt!: string;
 
-  @ApiProperty({ format: 'date-time', nullable: true })
+  @ApiProperty({ type: String, format: 'date-time', nullable: true })
   lastLogin!: string | null;
 }
 
 export class LoginResponseDto {
-  @ApiProperty({ description: 'Copy this value into Swagger Authorize; send it as the X-API-Key header.' })
+  @ApiProperty({ type: String, description: 'Copy this value into Swagger Authorize; send it as the X-API-Key header.' })
   apiKey!: string;
 
-  @ApiProperty({ example: 'X-API-Key' })
+  @ApiProperty({ type: String, example: 'X-API-Key' })
   headerName!: string;
 
   @ApiProperty({ format: 'date-time' })
