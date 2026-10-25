@@ -1,3 +1,7 @@
+jest.mock('../helpdesk-client/helpdesk-client.service', () => ({
+  HelpdeskClientService: class HelpdeskClientService {},
+}));
+
 import { TicketsService } from './tickets.service';
 import { API_ENDPOINTS } from '@repo/constants';
 
