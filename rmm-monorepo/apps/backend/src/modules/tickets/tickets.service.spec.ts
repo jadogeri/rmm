@@ -52,7 +52,7 @@ describe('TicketsService public ticket creation', () => {
       IssueTypeId: 'leaf-issue-id',
       ProjectId: null,
     }));
-    expect(result).toEqual({ TicketNumber: 1042 });
+    expect(result).toEqual({ ticketNumber: 1042 });
   });
 
   it('rejects a parent issue that has child issue types', async () => {

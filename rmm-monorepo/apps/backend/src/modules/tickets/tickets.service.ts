@@ -76,7 +76,7 @@ export class TicketsService {
       throw new BadRequestException('This issue type has sub-issues. Select one child issue.');
     }
 
-    return this.create({
+    const createdTicket = await this.create({
       title,
       description,
       dueDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
@@ -87,6 +87,8 @@ export class TicketsService {
       projectId: '',
       ticketPriorityCode: 1,
     });
+    const ticketRecord = createdTicket as unknown as Record<string, unknown>;
+    return { ticketNumber: ticketRecord.ticketNumber ?? ticketRecord.TicketNumber ?? null };
   }
 
   /**
