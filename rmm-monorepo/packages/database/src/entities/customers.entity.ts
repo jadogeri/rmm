@@ -1,7 +1,7 @@
 import { Entity, PrimaryKey, Property, OneToMany, ManyToOne, Collection } from '@mikro-orm/core'; // 🟢 Added ManyToOne
 import { ICustomer } from '@repo/types';
 import { LocationsEntity } from './locations.entity'; 
-import { CompanyEntity } from './Company.entity'; // 🟢 Import your Company Entity
+import { CompanyEntity } from './company.entity'; // 🟢 Import your Company Entity
 
 @Entity({ tableName: 'customers' })
 export class CustomersEntity implements ICustomer {

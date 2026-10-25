@@ -1,6 +1,6 @@
 import { Entity, PrimaryKey, Property, ManyToOne, Rel } from '@mikro-orm/core';
 import { IUser } from '@repo/types';
-import { CompanyEntity } from './Company.entity';
+import { CompanyEntity } from './company.entity';
 
 @Entity({ tableName: 'users' })
 export class UsersEntity implements IUser {
