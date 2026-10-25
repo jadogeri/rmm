@@ -68,7 +68,9 @@ export default function Home() {
     try {
       const response = await fetch("/api/issue-types", { cache: "no-store" });
       if (!response.ok) throw new Error("The service desk could not load issue types. Check the backend connection and try again.");
-      setIssues(issueOptions(records(await response.json())));
+      const availableIssues = issueOptions(records(await response.json()));
+      if (!availableIssues.length) throw new Error("No issue types are configured. Contact your service desk.");
+      setIssues(availableIssues);
     } catch (error) {
       setLoadError(error instanceof Error ? error.message : "Could not load issue types.");
     } finally {
