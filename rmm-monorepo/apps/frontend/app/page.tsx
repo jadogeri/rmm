@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import styles from "./page.module.css";
 
 type Row = Record<string, unknown>;
@@ -23,15 +23,38 @@ const actions: { id: Action; label: string; description: string; icon: string }[
   { id: "delete", label: "Delete ticket", description: "Request removal of a ticket you no longer need.", icon: "×" },
 ];
 
-function records(value: unknown): Row[] {
-  if (Array.isArray(value)) return value.filter((item): item is Row => !!item && typeof item === "object");
-  if (!value || typeof value !== "object") return [];
-  const source = value as Row;
-  if (Array.isArray(source.value)) return records(source.value);
-  if (Array.isArray(source.data)) return records(source.data);
-  if (Array.isArray(source.items)) return records(source.items);
-  return [];
-}
+const STATIC_ISSUES: IssueOption[] = [
+  { id: "00000000-0000-4000-8000-000000000001", label: "Hardware", children: [
+    { id: "00000000-0000-4000-8000-000000000101", label: "Computer or laptop", children: [] },
+    { id: "00000000-0000-4000-8000-000000000102", label: "Printer or scanner", children: [] },
+    { id: "00000000-0000-4000-8000-000000000103", label: "Other hardware", children: [] },
+  ] },
+  { id: "00000000-0000-4000-8000-000000000002", label: "Software", children: [
+    { id: "00000000-0000-4000-8000-000000000201", label: "Application issue", children: [] },
+    { id: "00000000-0000-4000-8000-000000000202", label: "Install or update software", children: [] },
+    { id: "00000000-0000-4000-8000-000000000203", label: "License or activation", children: [] },
+  ] },
+  { id: "00000000-0000-4000-8000-000000000003", label: "Network", children: [
+    { id: "00000000-0000-4000-8000-000000000301", label: "Wi-Fi or network connection", children: [] },
+    { id: "00000000-0000-4000-8000-000000000302", label: "VPN connection", children: [] },
+    { id: "00000000-0000-4000-8000-000000000303", label: "Shared drive access", children: [] },
+  ] },
+  { id: "00000000-0000-4000-8000-000000000004", label: "Email", children: [
+    { id: "00000000-0000-4000-8000-000000000401", label: "Email sign-in", children: [] },
+    { id: "00000000-0000-4000-8000-000000000402", label: "Sending or receiving mail", children: [] },
+    { id: "00000000-0000-4000-8000-000000000403", label: "Shared mailbox or calendar", children: [] },
+  ] },
+  { id: "00000000-0000-4000-8000-000000000005", label: "Account access", children: [
+    { id: "00000000-0000-4000-8000-000000000501", label: "Password reset", children: [] },
+    { id: "00000000-0000-4000-8000-000000000502", label: "New or changed permissions", children: [] },
+    { id: "00000000-0000-4000-8000-000000000503", label: "Multi-factor authentication", children: [] },
+  ] },
+  { id: "00000000-0000-4000-8000-000000000006", label: "Security", children: [
+    { id: "00000000-0000-4000-8000-000000000601", label: "Suspicious email or message", children: [] },
+    { id: "00000000-0000-4000-8000-000000000602", label: "Security alert", children: [] },
+    { id: "00000000-0000-4000-8000-000000000603", label: "Other security concern", children: [] },
+  ] },
+];
 
 function text(row: Row, ...keys: string[]): string {
   for (const key of keys) {
@@ -41,26 +64,13 @@ function text(row: Row, ...keys: string[]): string {
   return "";
 }
 
-function issueOptions(items: Row[]): IssueOption[] {
-  return items.map((item) => ({
-    id: text(item, "issueTypeId", "IssueTypeId", "id", "Id"),
-    label: text(item, "name", "Name", "issueTypeName", "IssueTypeName"),
-    children: records(item.children ?? item.Children).map((child) => ({
-      id: text(child, "issueTypeId", "IssueTypeId", "id", "Id"),
-      label: text(child, "name", "Name", "issueTypeName", "IssueTypeName"),
-      children: [],
-    })).filter((child) => child.id && child.label),
-  })).filter((item) => item.id && item.label);
-}
-
 const emptyForm = (): TicketForm => ({ email: "", title: "", description: "", issueTypeId: "", childIssueTypeId: "" });
 
 export default function Home() {
   const [form, setForm] = useState<TicketForm>(emptyForm);
-  const [issues, setIssues] = useState<IssueOption[]>([]);
-  const [loading, setLoading] = useState(true);
+  const issues = STATIC_ISSUES;
+  const loading = false;
   const [submitting, setSubmitting] = useState(false);
-  const [loadError, setLoadError] = useState("");
   const [submitError, setSubmitError] = useState("");
   const [ticketNumber, setTicketNumber] = useState("");
   const [selectedAction, setSelectedAction] = useState<Action>("create");
@@ -78,24 +88,6 @@ export default function Home() {
     document.documentElement.dataset.theme = theme;
     window.localStorage.setItem("rmm-service-desk-theme", theme);
   }, [theme]);
-
-  const loadOptions = useCallback(async () => {
-    setLoading(true);
-    setLoadError("");
-    try {
-      const response = await fetch("/api/issue-types", { cache: "no-store" });
-      if (!response.ok) throw new Error("The service desk could not load issue types. Check the backend connection and try again.");
-      const available = issueOptions(records(await response.json()));
-      if (!available.length) throw new Error("No issue types are configured. Contact your service desk.");
-      setIssues(available);
-    } catch (error) {
-      setLoadError(error instanceof Error ? error.message : "Could not load issue types.");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => { void loadOptions(); }, [loadOptions]);
 
   const selectedIssue = issues.find((item) => item.id === form.issueTypeId);
   const childIssues = selectedIssue?.children ?? [];
@@ -206,7 +198,6 @@ export default function Home() {
                   <button type="button" className={styles.dismiss} onClick={() => setTicketNumber("")} aria-label="Dismiss success message">×</button>
                 </motion.div>}
               </AnimatePresence>
-              {loadError && <div className={styles.errorNotice} role="alert"><strong>Couldn’t load issue types</strong><span>{loadError}</span><button type="button" onClick={() => void loadOptions()}>Try again</button></div>}
               {submitError && <div className={styles.errorNotice} role="alert"><strong>Ticket not sent</strong><span>{submitError}</span></div>}
 
               <form onSubmit={submitTicket} className={styles.form}>
@@ -218,8 +209,8 @@ export default function Home() {
                 </section>
 
                 <section className={styles.formSection}>
-                  <div className={styles.sectionHeading}><span>2</span><div><h3>Issue type</h3><p>Choose a category and, when available, one sub-issue.</p></div></div>
-                  <label className={styles.fieldFull}><span>Issue type <b>*</b></span><select required value={form.issueTypeId} onChange={(event) => setForm((current) => ({ ...current, issueTypeId: event.target.value, childIssueTypeId: "" }))} disabled={loading || !!loadError}>
+                  <div className={styles.sectionHeading}><span>2</span><div><h3>Issue type</h3><p>Static sample categories. Ticket creation also requires the selected issue to exist in the backend.</p></div></div>
+                  <label className={styles.fieldFull}><span>Issue type <b>*</b></span><select required value={form.issueTypeId} onChange={(event) => setForm((current) => ({ ...current, issueTypeId: event.target.value, childIssueTypeId: "" }))} disabled={loading}>
                     <option value="">Select an issue type</option>{issues.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}
                   </select></label>
                   {childIssues.length > 0 && <label className={styles.fieldFull}><span>Sub-issue <b>*</b></span><select required value={form.childIssueTypeId} onChange={(event) => setForm((current) => ({ ...current, childIssueTypeId: event.target.value }))}><option value="">Select one sub-issue</option>{childIssues.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}</select><em>Select one child issue; only that choice is attached to the ticket.</em></label>}
@@ -227,7 +218,7 @@ export default function Home() {
 
                 <div className={styles.formFooter}>
                   <span className={styles.secureNote}><span aria-hidden="true">⌑</span> Ticket number is a reference, not an access credential.</span>
-                  <button className={styles.submitButton} type="submit" disabled={loading || submitting || !!loadError}>
+                  <button className={styles.submitButton} type="submit" disabled={loading || submitting}>
                     {submitting ? <><i className={styles.spinner} /> Sending…</> : <>Create ticket <span aria-hidden="true">→</span></>}
                   </button>
                 </div>
@@ -252,7 +243,7 @@ export default function Home() {
             <div className={styles.tipLine}><span>02</span><div><strong>Be specific</strong><small>What’s affected, and when did it start?</small></div></div>
             <div className={styles.tipLine}><span>03</span><div><strong>Keep your ticket number</strong><small>It helps us identify your request; it doesn’t grant access.</small></div></div>
           </div>
-          <div className={styles.statusCard}><span className={styles.statusPulse} /><div><strong>{loading ? "Connecting to service desk" : loadError ? "Connection needs attention" : "Service desk connected"}</strong><small>{loading ? "Loading issue types" : loadError ? "Issue types unavailable" : "Issue types are up to date"}</small></div></div>
+          <div className={styles.statusCard}><span className={styles.statusPulse} /><div><strong>{"Static issue list loaded"}</strong><small>{"Sample categories are ready"}</small></div></div>
         </aside>
       </div>
 
