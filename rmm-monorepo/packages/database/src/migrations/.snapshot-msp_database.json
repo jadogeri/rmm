@@ -1,0 +1,1037 @@
+{
+  "namespaces": [
+    "public"
+  ],
+  "name": "public",
+  "tables": [
+    {
+      "columns": {
+        "CompanyId": {
+          "name": "CompanyId",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": true,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "uuid"
+        },
+        "CompanyName": {
+          "name": "CompanyName",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "string"
+        },
+        "LastTicketNumber": {
+          "name": "LastTicketNumber",
+          "type": "int4",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": 32,
+          "scale": 0,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "integer"
+        },
+        "BusinessType": {
+          "name": "BusinessType",
+          "type": "int4",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": 32,
+          "scale": 0,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "integer"
+        }
+      },
+      "name": "company",
+      "schema": "public",
+      "indexes": [
+        {
+          "columnNames": [
+            "CompanyId"
+          ],
+          "composite": false,
+          "constraint": false,
+          "keyName": "company_pkey",
+          "unique": true,
+          "primary": true,
+          "expression": "CREATE UNIQUE INDEX company_pkey ON public.company USING btree (\"CompanyId\")"
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {},
+      "nativeEnums": {},
+      "comment": null
+    },
+    {
+      "columns": {
+        "ContactId": {
+          "name": "ContactId",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": true,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "uuid"
+        },
+        "FirstName": {
+          "name": "FirstName",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "string"
+        },
+        "LastName": {
+          "name": "LastName",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "string"
+        },
+        "EmailAddress": {
+          "name": "EmailAddress",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "string"
+        },
+        "PhoneMobile": {
+          "name": "PhoneMobile",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "string"
+        },
+        "CompanyId": {
+          "name": "CompanyId",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "uuid"
+        },
+        "LocationId": {
+          "name": "LocationId",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "uuid"
+        }
+      },
+      "name": "contacts",
+      "schema": "public",
+      "indexes": [
+        {
+          "columnNames": [
+            "ContactId"
+          ],
+          "composite": false,
+          "constraint": false,
+          "keyName": "contacts_pkey",
+          "unique": true,
+          "primary": true,
+          "expression": "CREATE UNIQUE INDEX contacts_pkey ON public.contacts USING btree (\"ContactId\")"
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "contacts_CompanyId_foreign": {
+          "columnNames": [
+            "CompanyId"
+          ],
+          "constraintName": "contacts_CompanyId_foreign",
+          "localTableName": "public.contacts",
+          "referencedTableName": "public.company",
+          "referencedColumnNames": [
+            "CompanyId"
+          ],
+          "updateRule": "cascade",
+          "deleteRule": "set null"
+        },
+        "contacts_LocationId_foreign": {
+          "columnNames": [
+            "LocationId"
+          ],
+          "constraintName": "contacts_LocationId_foreign",
+          "localTableName": "public.contacts",
+          "referencedTableName": "public.locations",
+          "referencedColumnNames": [
+            "LocationId"
+          ],
+          "updateRule": "cascade",
+          "deleteRule": "set null"
+        }
+      },
+      "nativeEnums": {},
+      "comment": null
+    },
+    {
+      "columns": {
+        "CustomerId": {
+          "name": "CustomerId",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": true,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "uuid"
+        },
+        "CustomerName": {
+          "name": "CustomerName",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "string"
+        },
+        "ReferenceId": {
+          "name": "ReferenceId",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "string"
+        },
+        "ProgramLevelId": {
+          "name": "ProgramLevelId",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "uuid"
+        },
+        "CustomerStatusId": {
+          "name": "CustomerStatusId",
+          "type": "int4",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": 32,
+          "scale": 0,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "integer"
+        },
+        "CompanyId": {
+          "name": "CompanyId",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "uuid"
+        }
+      },
+      "name": "customers",
+      "schema": "public",
+      "indexes": [
+        {
+          "columnNames": [
+            "CustomerId"
+          ],
+          "composite": false,
+          "constraint": false,
+          "keyName": "customers_pkey",
+          "unique": true,
+          "primary": true,
+          "expression": "CREATE UNIQUE INDEX customers_pkey ON public.customers USING btree (\"CustomerId\")"
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "customers_CompanyId_foreign": {
+          "columnNames": [
+            "CompanyId"
+          ],
+          "constraintName": "customers_CompanyId_foreign",
+          "localTableName": "public.customers",
+          "referencedTableName": "public.company",
+          "referencedColumnNames": [
+            "CompanyId"
+          ],
+          "updateRule": "cascade",
+          "deleteRule": "set null"
+        }
+      },
+      "nativeEnums": {},
+      "comment": null
+    },
+    {
+      "columns": {
+        "IssueTypeId": {
+          "name": "IssueTypeId",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": true,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "uuid"
+        },
+        "Name": {
+          "name": "Name",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "string"
+        },
+        "Description": {
+          "name": "Description",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "text"
+        },
+        "RmReferenceId": {
+          "name": "RmReferenceId",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "string"
+        },
+        "CompanyId": {
+          "name": "CompanyId",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "uuid"
+        },
+        "ParentIssueTypeId": {
+          "name": "ParentIssueTypeId",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "uuid"
+        }
+      },
+      "name": "issue_types",
+      "schema": "public",
+      "indexes": [
+        {
+          "columnNames": [
+            "IssueTypeId"
+          ],
+          "composite": false,
+          "constraint": false,
+          "keyName": "issue_types_pkey",
+          "unique": true,
+          "primary": true,
+          "expression": "CREATE UNIQUE INDEX issue_types_pkey ON public.issue_types USING btree (\"IssueTypeId\")"
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "issue_types_CompanyId_foreign": {
+          "columnNames": [
+            "CompanyId"
+          ],
+          "constraintName": "issue_types_CompanyId_foreign",
+          "localTableName": "public.issue_types",
+          "referencedTableName": "public.company",
+          "referencedColumnNames": [
+            "CompanyId"
+          ],
+          "updateRule": "cascade",
+          "deleteRule": "set null"
+        },
+        "issue_types_ParentIssueTypeId_foreign": {
+          "columnNames": [
+            "ParentIssueTypeId"
+          ],
+          "constraintName": "issue_types_ParentIssueTypeId_foreign",
+          "localTableName": "public.issue_types",
+          "referencedTableName": "public.issue_types",
+          "referencedColumnNames": [
+            "IssueTypeId"
+          ],
+          "updateRule": "cascade",
+          "deleteRule": "cascade"
+        }
+      },
+      "nativeEnums": {},
+      "comment": null
+    },
+    {
+      "columns": {
+        "LocationId": {
+          "name": "LocationId",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": true,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "uuid"
+        },
+        "LocationName": {
+          "name": "LocationName",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "string"
+        },
+        "CustomerId": {
+          "name": "CustomerId",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "uuid"
+        }
+      },
+      "name": "locations",
+      "schema": "public",
+      "indexes": [
+        {
+          "columnNames": [
+            "LocationId"
+          ],
+          "composite": false,
+          "constraint": false,
+          "keyName": "locations_pkey",
+          "unique": true,
+          "primary": true,
+          "expression": "CREATE UNIQUE INDEX locations_pkey ON public.locations USING btree (\"LocationId\")"
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "locations_CustomerId_foreign": {
+          "columnNames": [
+            "CustomerId"
+          ],
+          "constraintName": "locations_CustomerId_foreign",
+          "localTableName": "public.locations",
+          "referencedTableName": "public.customers",
+          "referencedColumnNames": [
+            "CustomerId"
+          ],
+          "updateRule": "cascade",
+          "deleteRule": "cascade"
+        }
+      },
+      "nativeEnums": {},
+      "comment": null
+    },
+    {
+      "columns": {
+        "ServiceItemId": {
+          "name": "ServiceItemId",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": true,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "uuid"
+        },
+        "ServiceItemName": {
+          "name": "ServiceItemName",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "string"
+        },
+        "ServiceItemTypeCode": {
+          "name": "ServiceItemTypeCode",
+          "type": "int4",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": 32,
+          "scale": 0,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "integer"
+        },
+        "CustomerId": {
+          "name": "CustomerId",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "uuid"
+        }
+      },
+      "name": "service_items",
+      "schema": "public",
+      "indexes": [
+        {
+          "columnNames": [
+            "ServiceItemId"
+          ],
+          "composite": false,
+          "constraint": false,
+          "keyName": "service_items_pkey",
+          "unique": true,
+          "primary": true,
+          "expression": "CREATE UNIQUE INDEX service_items_pkey ON public.service_items USING btree (\"ServiceItemId\")"
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "service_items_CustomerId_foreign": {
+          "columnNames": [
+            "CustomerId"
+          ],
+          "constraintName": "service_items_CustomerId_foreign",
+          "localTableName": "public.service_items",
+          "referencedTableName": "public.customers",
+          "referencedColumnNames": [
+            "CustomerId"
+          ],
+          "updateRule": "cascade",
+          "deleteRule": "set null"
+        }
+      },
+      "nativeEnums": {},
+      "comment": null
+    },
+    {
+      "columns": {
+        "TicketCustomStatusId": {
+          "name": "TicketCustomStatusId",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": true,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "uuid"
+        },
+        "Name": {
+          "name": "Name",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "text"
+        },
+        "Description": {
+          "name": "Description",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "text"
+        },
+        "IsDefault": {
+          "name": "IsDefault",
+          "type": "bool",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": "false",
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "boolean"
+        },
+        "TicketStatusCode": {
+          "name": "TicketStatusCode",
+          "type": "int4",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": 32,
+          "scale": 0,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "integer"
+        },
+        "CompanyId": {
+          "name": "CompanyId",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "uuid"
+        }
+      },
+      "name": "ticket_custom_statuses",
+      "schema": "public",
+      "indexes": [
+        {
+          "columnNames": [
+            "TicketCustomStatusId"
+          ],
+          "composite": false,
+          "constraint": false,
+          "keyName": "ticket_custom_statuses_pkey",
+          "unique": true,
+          "primary": true,
+          "expression": "CREATE UNIQUE INDEX ticket_custom_statuses_pkey ON public.ticket_custom_statuses USING btree (\"TicketCustomStatusId\")"
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "ticket_custom_statuses_CompanyId_foreign": {
+          "columnNames": [
+            "CompanyId"
+          ],
+          "constraintName": "ticket_custom_statuses_CompanyId_foreign",
+          "localTableName": "public.ticket_custom_statuses",
+          "referencedTableName": "public.company",
+          "referencedColumnNames": [
+            "CompanyId"
+          ],
+          "updateRule": "cascade",
+          "deleteRule": "set null"
+        }
+      },
+      "nativeEnums": {},
+      "comment": null
+    },
+    {
+      "columns": {
+        "UserId": {
+          "name": "UserId",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": true,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "uuid"
+        },
+        "EmailAddress": {
+          "name": "EmailAddress",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "string"
+        },
+        "FirstName": {
+          "name": "FirstName",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "string"
+        },
+        "LastName": {
+          "name": "LastName",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "string"
+        },
+        "Status": {
+          "name": "Status",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "string"
+        },
+        "Enabled": {
+          "name": "Enabled",
+          "type": "bool",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "boolean"
+        },
+        "LastLogin": {
+          "name": "LastLogin",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "string"
+        },
+        "PhoneMobile": {
+          "name": "PhoneMobile",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "string"
+        },
+        "CompanyId": {
+          "name": "CompanyId",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "uuid"
+        }
+      },
+      "name": "users",
+      "schema": "public",
+      "indexes": [
+        {
+          "columnNames": [
+            "UserId"
+          ],
+          "composite": false,
+          "constraint": false,
+          "keyName": "users_pkey",
+          "unique": true,
+          "primary": true,
+          "expression": "CREATE UNIQUE INDEX users_pkey ON public.users USING btree (\"UserId\")"
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "users_CompanyId_foreign": {
+          "columnNames": [
+            "CompanyId"
+          ],
+          "constraintName": "users_CompanyId_foreign",
+          "localTableName": "public.users",
+          "referencedTableName": "public.company",
+          "referencedColumnNames": [
+            "CompanyId"
+          ],
+          "updateRule": "cascade",
+          "deleteRule": "set null"
+        }
+      },
+      "nativeEnums": {},
+      "comment": null
+    }
+  ],
+  "nativeEnums": {}
+}

@@ -26,7 +26,7 @@ export class SyncCronService {
     private readonly usersService: UsersService
   ) {}
 
-  @Cron(CronExpression.EVERY_MINUTE)
+  @Cron(CronExpression.EVERY_HOUR)
   async runNightlySync() {
     this.logger.log('🚀 Starting global type-safe synchronization pipeline pass...');
     console.log('Starting nightly sync...');
